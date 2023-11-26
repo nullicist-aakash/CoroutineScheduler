@@ -18,6 +18,9 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)datatypes.ixx" />
     <ClCompile Include="$(MSBuildThisFileDirectory)dns.ixx" />
     <ClCompile Include="$(MSBuildThisFileDirectory)network.ixx" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)network_import.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)tcp.ixx" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)tcpserver.ixx" />
     <ClCompile Include="$(MSBuildThisFileDirectory)udp.ixx" />
   </ItemGroup>
   <ItemGroup>

@@ -1,12 +1,16 @@
 #pragma once
+
+#include <string>
+
 #define WINDOWS defined(WIN32) || defined(_WIN32) || defined(__WIN32__) || defined(__NT__)
 #define UNIX defined(__unix__) || defined(__unix)
 
-#ifdef WINDOWS
+#if WINDOWS
 #include <winsock2.h>
 #include <ws2tcpip.h>
 #include <iphlpapi.h>
 #include <stdexcept>
+#include <system_error>
 
 class WSAWrapper 
 {
@@ -39,3 +43,7 @@ private:
 #include <unistd.h>
 #include <sys/socket.h>
 #endif
+
+consteval bool is_windows();
+consteval bool is_unix();
+std::string get_err_str();

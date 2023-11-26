@@ -3,24 +3,18 @@
 #include <vector>
 #include <stdexcept>
 #include <format>
-import network;
-#include "network_import.h"
 
+import network;
 using namespace std;
 
 int main()
 {
-	try
+	UDP udp;
+	udp.bind(Socket{ {}, PORT{8080, ByteOrder::HOST} });
+	while (true)
 	{
-		UDP udp{ Socket{ {}, PORT{8081, ByteOrder::HOST} } };
-		while (true)
-		{
-			auto [msg, sender] = udp.receive();
-			udp.send(msg, sender);
-		}
-	}
-	catch (const exception& e)
-	{
-		cout << e.what() << endl;
+		auto [data, addr] = udp.receive();
+		cout << format("Received {} bytes from {}: {}\n", data.size(), (string)addr, data);
+		udp.send(data, addr);
 	}
 }

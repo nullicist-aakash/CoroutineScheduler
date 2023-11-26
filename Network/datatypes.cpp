@@ -2,7 +2,6 @@ module;
 #include <stdexcept>
 #include <format>
 #include "network_import.h"
-#include <system_error>
 
 module network.types;
 import <iostream>;
@@ -12,17 +11,14 @@ import <cstdint>;
 
 using namespace std;
 
-std::string get_err_str()
-{
-    DWORD error = ::GetLastError();
-    return std::system_category().message(error);
-}
-
 uint32_t get_ip_n(std::string_view value)
 {
-#ifdef WINDOWS
-    struct sockaddr_in sa {};
-    switch (InetPtonA(AF_INET, value.data(), &(sa.sin_addr)))
+    uint32_t ip{};
+#if WINDOWS
+    switch (InetPtonA(AF_INET, value.data(), &ip))
+#elif UNIX
+    switch (inet_pton(AF_INET, value.data(), &ip))
+#endif
     {
     case 0:
         throw std::runtime_error(format("IP address '{}' doesn't belong to IPv4 family.", value));
@@ -30,67 +26,49 @@ uint32_t get_ip_n(std::string_view value)
         throw std::runtime_error(format("Invalid IP address '{}'. Error: {}", value, get_err_str()));
     }
 
-    return (uint32_t)(sa.sin_addr.s_addr);
-#elif UNIX
-    uint32_t ip{};
-    switch (inet_pton(AF_INET, value.data(), &ip))
-    {
-    case 0:
-        throw std::runtime_error(format("IP address '{0}' doesn't belong to IPv4 family.", value));
-    case -1:
-        throw std::runtime_error(format("IP address '{0}' doesn't belong to any family.", value));
-    }
     return ip;
-#else
-#error "Unknown platform"
-#endif
 }
 
 std::vector<IP> IP::get_local_ips()
 {
     std::vector<IP> ips;
 
-#ifdef WINDOWS
+#if WINDOWS
     ULONG outBufLen = 0;
     DWORD dwRetVal = 0;
 
-    // Make an initial call to GetAdaptersAddresses to get the required buffer size
-    PIP_ADAPTER_ADDRESSES pAddresses = nullptr;
-    if (GetAdaptersAddresses(AF_INET, GAA_FLAG_INCLUDE_PREFIX, nullptr, nullptr, &outBufLen) != ERROR_BUFFER_OVERFLOW) {
-        std::cerr << "Error getting buffer size\n";
-        return ips;
-    }
+    if (GetAdaptersAddresses(AF_INET, GAA_FLAG_INCLUDE_PREFIX, nullptr, nullptr, &outBufLen) != ERROR_BUFFER_OVERFLOW)
+        throw std::runtime_error("'GetAdaptersAddresses': Error getting buffer size");
 
-    pAddresses = static_cast<IP_ADAPTER_ADDRESSES*>(malloc(outBufLen));
-    if (pAddresses == nullptr) {
-        std::cerr << "Memory allocation failed\n";
-        return ips;
-    }
+    PIP_ADAPTER_ADDRESSES pAddresses = static_cast<IP_ADAPTER_ADDRESSES*>(malloc(outBufLen));
+    if (pAddresses == nullptr)
+        throw std::runtime_error("'GetAdaptersAddresses': Error getting buffer size");
 
-    if (GetAdaptersAddresses(AF_INET, GAA_FLAG_INCLUDE_PREFIX, nullptr, pAddresses, &outBufLen) != NO_ERROR) {
+    if (GetAdaptersAddresses(AF_INET, GAA_FLAG_INCLUDE_PREFIX, nullptr, pAddresses, &outBufLen) != NO_ERROR)
+    {
         free(pAddresses);
-        std::cerr << "GetAdaptersAddresses failed\n";
-        return ips;
+        throw std::runtime_error("GetAdaptersAddresses failed");
     }
 
-    for (PIP_ADAPTER_ADDRESSES pCurrAddresses = pAddresses; pCurrAddresses != nullptr; pCurrAddresses = pCurrAddresses->Next) {
-        for (IP_ADAPTER_UNICAST_ADDRESS* pUnicast = pCurrAddresses->FirstUnicastAddress; pUnicast != nullptr; pUnicast = pUnicast->Next) {
-            sockaddr_in* sockaddr_ipv4 = reinterpret_cast<sockaddr_in*>(pUnicast->Address.lpSockaddr);
-            IP ip(ntohl(sockaddr_ipv4->sin_addr.s_addr));
-            ips.push_back(ip);
+    for (auto cur = pAddresses; cur; cur = cur->Next)
+    {
+        for (auto* pUnicast = cur->FirstUnicastAddress; pUnicast; pUnicast = pUnicast->Next) 
+        {
+            auto sockaddr_ipv4 = (sockaddr_in*)pUnicast->Address.lpSockaddr;
+            ips.push_back(sockaddr_ipv4->sin_addr.s_addr);
         }
     }
 
-    if (pAddresses != nullptr) {
+    if (pAddresses != nullptr)
         free(pAddresses);
-    }
+
 #elif UNIX
     struct ifaddrs* ifAddrStruct = nullptr;
-    if (getifaddrs(&ifAddrStruct) != 0) {
+    if (getifaddrs(&ifAddrStruct) != 0)
         return ips;
-    }
 
-    for (struct ifaddrs* ifa = ifAddrStruct; ifa != nullptr; ifa = ifa->ifa_next) {
+    for (auto ifa = ifAddrStruct; ifa; ifa = ifa->ifa_next) 
+    {
         if (ifa->ifa_addr == nullptr || ifa->ifa_addr->sa_family != AF_INET)
             continue;
 
@@ -102,8 +80,6 @@ std::vector<IP> IP::get_local_ips()
     }
 
     freeifaddrs(ifAddrStruct);
-#else
-#error "Unknown platform"
 #endif
 
     return ips;
@@ -169,13 +145,13 @@ std::istream& operator>> (std::istream& in, PORT& port)
     return in;
 }
 
-Socket::Socket(socket_addr& addr) : ip{ addr.sin_addr.s_addr }, port{ addr.sin_port } { }
+Socket::Socket(sockaddr_in& addr) : ip{ addr.sin_addr.s_addr }, port{ addr.sin_port } { }
 
 Socket::Socket(IP ip, PORT port) : ip{ ip }, port{ port } { }
 
-Socket::operator socket_addr() const
+Socket::operator sockaddr_in() const
 {
-    socket_addr addr;
+    sockaddr_in addr;
     memset(&addr, 0, sizeof(addr));
     addr.sin_family = AF_INET;
     addr.sin_addr.s_addr = ip.get_ip();

@@ -13,14 +13,6 @@ export enum class ByteOrder
     HOST
 };
 
-#ifdef WINDOWS
-using socket_addr = sockaddr_in;
-#elif UNIX
-using socket_addr = sockaddr_in;
-#else
-#error "Unknown platform"
-#endif
-
 export class IP
 {
     std::uint32_t ip4_n{ 0 };
@@ -41,7 +33,7 @@ public:
 
 export class PORT
 {
-    uint16_t port_n{ 0 };
+    std::uint16_t port_n{ 0 };
 public:
     constexpr PORT(const uint16_t& value = 0, ByteOrder order = ByteOrder::NETWORK);
 
@@ -63,7 +55,7 @@ public:
     IP ip{};
     PORT port{};
 
-    Socket(socket_addr& addr);
+    Socket(sockaddr_in& addr);
     Socket(IP ip = {}, PORT port = {});
 
     bool operator==(const Socket& other) const
@@ -76,7 +68,7 @@ public:
         return (ip != other.ip) || (port != other.port);
     }
 
-    operator socket_addr() const;
+    operator sockaddr_in() const;
     operator std::string() const
     {
         return (std::string)ip + ":" + (std::string)port;
