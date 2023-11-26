@@ -1,0 +1,52 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <ClCompile Include="$(MSBuildThisFileDirectory)network.ixx" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)datatypes.cpp">
+      <Filter>Basic</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)datatypes.ixx">
+      <Filter>Basic</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)network_import.cpp">
+      <Filter>Basic</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)tcp.ixx">
+      <Filter>Transport Layer</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)tcpserver.ixx">
+      <Filter>Transport Layer</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)udp.cpp">
+      <Filter>Transport Layer</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)udp.ixx">
+      <Filter>Transport Layer</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)dns.ixx">
+      <Filter>Application Layer</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)dns.cpp">
+      <Filter>Application Layer</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)tcp.cpp">
+      <Filter>Transport Layer</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="Basic">
+      <UniqueIdentifier>{bd8e2a04-5ee3-49b5-8a38-799a758599b0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Transport Layer">
+      <UniqueIdentifier>{7614453d-3002-41c1-bfd0-9f6bf7cd64f0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Application Layer">
+      <UniqueIdentifier>{c9f66257-f1a9-4ee8-a968-ca62e0356c0c}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="$(MSBuildThisFileDirectory)network_import.h">
+      <Filter>Basic</Filter>
+    </ClInclude>
+  </ItemGroup>
+</Project>

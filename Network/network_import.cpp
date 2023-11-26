@@ -1,5 +1,7 @@
 #include "network_import.h"
 
+using namespace std;
+
 consteval bool is_windows()
 {
 #if WINDOWS
@@ -18,13 +20,13 @@ consteval bool is_unix()
 #endif
 }
 
-std::string get_err_str()
+string get_err_str()
 {
 #if WINDOWS
     DWORD error = ::GetLastError();
-    return std::system_category().message(error);
+    return system_category().message(error);
 #elif UNIX
-    return std::strerror(errno);
+    return strerror(errno);
 #endif
     return {};
 }

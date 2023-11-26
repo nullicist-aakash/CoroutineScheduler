@@ -16,11 +16,14 @@
   <ItemGroup>
     <ClCompile Include="$(MSBuildThisFileDirectory)datatypes.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)datatypes.ixx" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)dns.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)dns.ixx" />
     <ClCompile Include="$(MSBuildThisFileDirectory)network.ixx" />
     <ClCompile Include="$(MSBuildThisFileDirectory)network_import.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)tcp.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)tcp.ixx" />
     <ClCompile Include="$(MSBuildThisFileDirectory)tcpserver.ixx" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)udp.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)udp.ixx" />
   </ItemGroup>
   <ItemGroup>

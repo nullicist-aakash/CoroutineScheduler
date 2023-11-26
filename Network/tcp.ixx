@@ -1,6 +1,4 @@
 module;
-#include <format>
-#include <stdio.h>
 #include "network_import.h"
 
 export module network.tcp.client;
@@ -9,24 +7,19 @@ import <string>;
 
 export class TCP
 {
-#if WINDOWS
-	SOCKET sockfd{};
-#elif UNIX
-	int sockfd{ -1 };
-#endif
-	SocketPair socket_pair;
+	SOCKET_TYPE sockfd{ INVALID_SOCKET };
+	SocketPair socket_pair{};
 
 	friend class TCPServer;
-	TCP(int, const SocketPair&);
+	TCP(SOCKET_TYPE, const SocketPair&);
 public:
 	TCP(const SocketPair&);
-
 	TCP(TCP&) = delete;
 	TCP& operator=(TCP&) = delete;
 	TCP(TCP&&);
 	TCP& operator=(TCP&&);
 
-	int send(const std::string&) const;
+	size_t send(std::string_view) const;
 	std::string receive(size_t n = 0) const;
 
 	const SocketPair& get_socket_pair() const;

@@ -4,6 +4,7 @@
 
 #define WINDOWS defined(WIN32) || defined(_WIN32) || defined(__WIN32__) || defined(__NT__)
 #define UNIX defined(__unix__) || defined(__unix)
+#define READ_MAX_SIZE 65535
 
 #if WINDOWS
 #include <winsock2.h>
@@ -11,7 +12,7 @@
 #include <iphlpapi.h>
 #include <stdexcept>
 #include <system_error>
-
+#define SOCKET_TYPE SOCKET
 class WSAWrapper 
 {
 public:
@@ -42,6 +43,9 @@ private:
 #include <netdb.h>
 #include <unistd.h>
 #include <sys/socket.h>
+#define SOCKET_TYPE int
+#define	INVALID_SOCKET -1
+#define SOCKET_ERROR -1
 #endif
 
 consteval bool is_windows();

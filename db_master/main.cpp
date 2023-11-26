@@ -9,12 +9,23 @@ using namespace std;
 
 int main()
 {
-	UDP udp;
-	udp.bind(Socket{ {}, PORT{8080, ByteOrder::HOST} });
-	while (true)
+	Socket self{ {"127.0.0.1"}, PORT{8081, ByteOrder::HOST} };
+	Socket remote{ {"127.0.0.1"}, PORT{8082, ByteOrder::HOST} };
+	
+	try
 	{
-		auto [data, addr] = udp.receive();
-		cout << format("Received {} bytes from {}: {}\n", data.size(), (string)addr, data);
-		udp.send(data, addr);
+		TCP tcp{ SocketPair{ self, remote } };
+		while (true)
+		{
+			auto msg = tcp.receive();
+			cout << msg << endl;
+			if (msg == "exit")
+				break;
+			tcp.send(msg);
+		}
+	}
+	catch (const std::exception& e)
+	{
+		cout << e.what() << endl;
 	}
 }
