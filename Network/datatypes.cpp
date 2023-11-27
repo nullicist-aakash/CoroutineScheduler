@@ -14,9 +14,9 @@ using namespace std;
 uint32_t get_ip_n(std::string_view value)
 {
     uint32_t ip{};
-#if WINDOWS
+#ifdef WINDOWS
     switch (InetPtonA(AF_INET, value.data(), &ip))
-#elif UNIX
+#elif defined(UNIX)
     switch (inet_pton(AF_INET, value.data(), &ip))
 #endif
     {
@@ -33,7 +33,7 @@ std::vector<IP> IP::get_local_ips()
 {
     std::vector<IP> ips;
 
-#if WINDOWS
+#ifdef WINDOWS
     ULONG outBufLen = 0;
     DWORD dwRetVal = 0;
 
@@ -62,7 +62,7 @@ std::vector<IP> IP::get_local_ips()
     if (pAddresses != nullptr)
         free(pAddresses);
 
-#elif UNIX
+#elif defined(UNIX)
     struct ifaddrs* ifAddrStruct = nullptr;
     if (getifaddrs(&ifAddrStruct) != 0)
         return ips;

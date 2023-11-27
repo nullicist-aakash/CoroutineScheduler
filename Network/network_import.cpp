@@ -2,30 +2,12 @@
 
 using namespace std;
 
-consteval bool is_windows()
-{
-#if WINDOWS
-    return true;
-#else
-    return false;
-#endif
-}
-
-consteval bool is_unix()
-{
-#if UNIX
-    return true;
-#else
-    return false;
-#endif
-}
-
 string get_err_str()
 {
-#if WINDOWS
+#ifdef WINDOWS
     DWORD error = ::GetLastError();
     return system_category().message(error);
-#elif UNIX
+#elif defined(UNIX)
     return strerror(errno);
 #endif
     return {};

@@ -11,7 +11,7 @@ import <string>;
 using namespace std;
 UDP::UDP()
 {
-#if WINDOWS
+#ifdef WINDOWS
 	WSAWrapper::instance();
 #endif
 	sockfd = ::socket(AF_INET, SOCK_DGRAM, IPPROTO_UDP);
@@ -81,9 +81,9 @@ PORT UDP::get_self_port() const
 void UDP::close()
 {
 	if (sockfd != INVALID_SOCKET)
-#if WINDOWS
+#ifdef WINDOWS
 		::closesocket(sockfd);
-#elif UNIX
+#elif defined(UNIX)
 		::close(sockfd);
 #endif
 	sockfd = INVALID_SOCKET;

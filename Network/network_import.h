@@ -2,11 +2,15 @@
 
 #include <string>
 
-#define WINDOWS defined(WIN32) || defined(_WIN32) || defined(__WIN32__) || defined(__NT__)
-#define UNIX defined(__unix__) || defined(__unix)
+#if defined(WIN32) || defined(_WIN32) || defined(__WIN32__) || defined(__NT__)
+#define WINDOWS
+#endif
+#if defined(__unix__) || defined(__unix)
+#define UNIX
+#endif
 #define READ_MAX_SIZE 65535
 
-#if WINDOWS
+#ifdef WINDOWS
 #include <winsock2.h>
 #include <ws2tcpip.h>
 #include <iphlpapi.h>
@@ -36,8 +40,7 @@ private:
     }
     WSADATA wsaData_;
 };
-
-#elif UNIX
+#elif defined(UNIX)
 #include <arpa/inet.h>
 #include <ifaddrs.h>
 #include <netdb.h>
@@ -48,6 +51,4 @@ private:
 #define SOCKET_ERROR -1
 #endif
 
-consteval bool is_windows();
-consteval bool is_unix();
 std::string get_err_str();

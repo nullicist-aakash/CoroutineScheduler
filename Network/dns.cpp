@@ -9,7 +9,7 @@ import <vector>;
 import network.types;
 
 using namespace std;
-#if WINDOWS
+#ifdef WINDOWS
 inline uint32_t ConvertIN_ADDR_To_uint32_t(const IN_ADDR& inAddr)
 {
     return (static_cast<uint32_t>(inAddr.S_un.S_un_b.s_b1)) |
@@ -22,7 +22,7 @@ inline uint32_t ConvertIN_ADDR_To_uint32_t(const IN_ADDR& inAddr)
 vector<IP> get_dns_response(string_view hostname)
 {
     vector<IP> response;
-#if WINDOWS
+#ifdef WINDOWS
     WSAWrapper::instance();
     addrinfo* result = nullptr;
     addrinfo hints;
@@ -46,7 +46,7 @@ vector<IP> get_dns_response(string_view hostname)
     }
 
     freeaddrinfo(result);
-#elif UNIX
+#elif defined(UNIX)
     auto hptr = gethostbyname(hostname.data());
     if (hptr == nullptr)
         throw runtime_error(format("gethostbyname failed for host {}: {}", hostname, hstrerror(h_errno));

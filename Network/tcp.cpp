@@ -14,7 +14,7 @@ TCP::TCP(SOCKET_TYPE sockfd, const SocketPair& sp) : sockfd{ sockfd }, socket_pa
 
 TCP::TCP(const SocketPair& sp)
 {
-#if WINDOWS
+#ifdef WINDOWS
 	WSAWrapper::instance();
 #endif
 	sockfd = ::socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
@@ -69,16 +69,16 @@ size_t TCP::send(string_view sv) const
 
 	while (nleft > 0)
 	{
-#if WINDOWS
+#ifdef WINDOWS
 		int nwritten = ::send(sockfd, ptr, (int)nleft, 0);
-#elif UNIX
+#elif defined(UNIX)
 		int nwritten = ::write(sockfd, ptr, nleft);
 #endif
 		if (nwritten == SOCKET_ERROR)
 		{
-#if WINDOWS
+#ifdef WINDOWS
 			if (nwritten < 0 && WSAGetLastError() == WSAEINTR)
-#elif UNIX
+#elif defined(UNIX)
 			if (nwritten < 0 && errno == EINTR)
 #endif
 				nwritten = 0;
@@ -98,9 +98,9 @@ std::string TCP::receive(size_t n) const
 	if (n == 0)
 	{
 		std::string str(READ_MAX_SIZE, '\0');
-#if WINDOWS
+#ifdef WINDOWS
 		int nread = ::recv(sockfd, str.data(), READ_MAX_SIZE, 0);
-#elif UNIX
+#elif defined(UNIX)
 		int nread = ::read(this->sockfd, str.data(), READ_MAX_SIZE);
 #endif
 		if (nread < 0)
@@ -116,16 +116,16 @@ std::string TCP::receive(size_t n) const
 
 	while (nleft > 0)
 	{
-#if WINDOWS
+#ifdef WINDOWS
 		int nread = recv(sockfd, ptr, (int)nleft, 0);
-#elif UNIX
+#elif defined(UNIX)
 		int nread = ::read(this->sockfd, ptr, nleft);
 #endif
 		if (nread < 0)
 		{
-#if WINDOWS
+#ifdef WINDOWS
 			if (WSAGetLastError() == WSAEINTR)
-#elif UNIX
+#elif defined(UNIX)
 			if (errno == EINTR)
 #endif
 				nread = 0;
@@ -151,9 +151,9 @@ const SocketPair& TCP::get_socket_pair() const
 void TCP::close()
 {
 	if (sockfd != INVALID_SOCKET)
-#if WINDOWS
+#ifdef WINDOWS
 		::closesocket(sockfd);
-#elif UNIX
+#elif defined(UNIX)
 		::close(sockfd);
 #endif
 	sockfd = INVALID_SOCKET;
