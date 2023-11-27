@@ -32,6 +32,9 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)tcp.cpp">
       <Filter>Transport Layer</Filter>
     </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)tcpserver.cpp">
+      <Filter>Transport Layer</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Basic">

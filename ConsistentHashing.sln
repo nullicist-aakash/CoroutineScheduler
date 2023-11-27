@@ -5,7 +5,7 @@ VisualStudioVersion = 17.7.34221.43
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Network", "Network\Network.vcxitems", "{0737E867-614E-4ED0-86C6-D34EAEF4C349}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "db_master", "db_master\db_master.vcxproj", "{546810B0-211A-42BE-A785-F61D8DF1065D}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "db master", "db_master\db_master.vcxproj", "{546810B0-211A-42BE-A785-F61D8DF1065D}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

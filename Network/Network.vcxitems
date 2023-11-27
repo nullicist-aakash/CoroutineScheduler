@@ -22,6 +22,7 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)network_import.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)tcp.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)tcp.ixx" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)tcpserver.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)tcpserver.ixx" />
     <ClCompile Include="$(MSBuildThisFileDirectory)udp.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)udp.ixx" />

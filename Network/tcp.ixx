@@ -1,7 +1,7 @@
 module;
 #include "network_import.h"
 
-export module network.tcp.client;
+export module network.tcp;
 import network.types;
 import <string>;
 

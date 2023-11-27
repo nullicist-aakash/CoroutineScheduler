@@ -12,20 +12,17 @@ int main()
 	Socket self{ {"127.0.0.1"}, PORT{8081, ByteOrder::HOST} };
 	Socket remote{ {"127.0.0.1"}, PORT{8082, ByteOrder::HOST} };
 	
-	try
+	TCPServer server{self};
+	while (true)
 	{
-		TCP tcp{ SocketPair{ self, remote } };
-		while (true)
-		{
-			auto msg = tcp.receive();
-			cout << msg << endl;
-			if (msg == "exit")
-				break;
-			tcp.send(msg);
-		}
-	}
-	catch (const std::exception& e)
-	{
-		cout << e.what() << endl;
+		auto client = server.accept();
+		std::thread([&](auto cl) {
+			while (true)
+			{
+				auto msg = cl.receive();
+				cout << cl.get_socket_pair() << ": " << msg << endl;
+				cl.send(msg);
+			}
+		}, std::move(client)).detach();
 	}
 }

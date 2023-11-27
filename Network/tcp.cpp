@@ -3,7 +3,7 @@ module;
 #include <stdio.h>
 #include "network_import.h"
 
-module network.tcp.client;
+module network.tcp;
 import network.types;
 import <utility>;
 import <string>;
