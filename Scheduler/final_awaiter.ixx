@@ -3,6 +3,7 @@ import <coroutine>;
 import <memory>;
 import <vector>;
 import <concepts>;
+import <cassert>;
 import scheduler.task.tasktype;
 
 export class final_awaiter
@@ -13,7 +14,7 @@ public:
         return false;
     }
 
-    template <typename PROMISE> requires is_promise<PROMISE>
+    template <typename PROMISE>
     std::coroutine_handle<void> await_suspend(std::coroutine_handle<PROMISE> h) noexcept
     {
         auto recursive_info = h.promise().recursive_info;

@@ -18,9 +18,6 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)task.ixx">
       <Filter>Task</Filter>
     </ClCompile>
-    <ClCompile Include="$(MSBuildThisFileDirectory)promise.ixx">
-      <Filter>Task</Filter>
-    </ClCompile>
     <ClCompile Include="$(MSBuildThisFileDirectory)eventloop.ixx">
       <Filter>Manager</Filter>
     </ClCompile>

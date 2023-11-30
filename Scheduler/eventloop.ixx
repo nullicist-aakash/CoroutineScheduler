@@ -55,15 +55,6 @@ export class EventLoop
 
             if (ttype == TaskType::IO)
                 target_coroutine.resume();
-            else
-            {
-                auto sleep_task = _task.get_handle_to_resume().first;
-                sleep_task.resume();
-                auto address = sleep_task.address();
-                auto coroutine = std::coroutine_handle<promise<milliseconds, TaskType::SLEEP>>::from_address(address);
-                milliseconds ms_time = *coroutine.promise().value;
-                std::this_thread::sleep_for(ms_time);
-            }
 
             if (_task.get_handles_count() == 0)
                 throw std::logic_error("Developer Bug. I/O task should not finish all 'calls' here.");
@@ -104,14 +95,6 @@ public:
             {
                 queue_for_io.push(std::move(_task));    // perform the task in thread pool
                 continue;
-            }
-            else if (_task.get_handle_to_resume().second == TaskType::SLEEP)
-            {
-                auto sleep_task = _task.get_handle_to_resume().first;
-                sleep_task.resume();
-                auto address = sleep_task.address();
-                auto coroutine = std::coroutine_handle<promise<milliseconds, TaskType::SLEEP>>::from_address(address);
-                queue_for_loop.push(std::move(_task), *coroutine.promise().value);
             }
             else
                 queue_for_loop.push(std::move(_task));

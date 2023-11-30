@@ -1,5 +1,4 @@
 export module scheduler.task.task;
-import scheduler.task.tasktype;
 import <coroutine>;
 import <memory>;
 import <vector>;
@@ -7,11 +6,15 @@ import <concepts>;
 import <optional>;
 import <stdexcept>;
 import <chrono>;
+import <iostream>;
+
+import scheduler.task.tasktype;
+import scheduler.task.final_awaiter;
 
 template <typename T, TaskType task_type>
 class promise;
 
-export template <typename T, TaskType task_type>
+template <typename T, TaskType task_type>
 class base_task
 {
     template <typename U, TaskType tt2>
@@ -20,7 +23,7 @@ class base_task
     friend class EventLoop;
 public:
     using promise_type = ::promise<T, task_type>;
-    explicit base_task(std::coroutine_handle<promise<T, task_type>> h) noexcept
+    explicit base_task(std::coroutine_handle<promise_type> h) noexcept
         : coro_(h)
     {}
 
@@ -47,8 +50,8 @@ public:
         return false;
     }
 
-    template <typename PROMISE> requires is_promise<PROMISE>
-    std::coroutine_handle<> await_suspend(std::coroutine_handle<PROMISE> previous) noexcept
+    template <typename U>
+    std::coroutine_handle<> await_suspend(std::coroutine_handle<U> previous) noexcept
     {
         auto& previous_promise = previous.promise();
         auto& cur_promise = coro_.promise();
@@ -93,10 +96,151 @@ private:
     std::coroutine_handle<promise_type> coro_;
 };
 
+export template <typename T, TaskType task_type>
+class promise
+{
+    template <typename U, TaskType tt2>
+    friend class base_task;
+    friend class final_awaiter;
+
+    std::optional<T> value{};
+
+    std::shared_ptr<std::vector<std::pair<void*, TaskType>>> recursive_info;
+public:
+    auto get_return_object() noexcept { return base_task<T, task_type>{ std::coroutine_handle<promise>::from_promise(*this) }; }
+
+    std::suspend_always initial_suspend() noexcept
+    {
+        recursive_info = std::make_shared<std::vector<std::pair<void*, TaskType>>>();
+        recursive_info->push_back({ std::coroutine_handle<promise>::from_promise(*this).address(), task_type });
+        return {};
+    }
+
+    final_awaiter final_suspend() noexcept { return {}; }
+
+    final_awaiter yield_value(T&& t)
+    {
+        value = std::move(t);
+        return {};
+    }
+
+    final_awaiter yield_value(T& t)
+    {
+        value = t;
+        return {};
+    }
+
+    void return_value(T&& t)
+    {
+        value = std::move(t);
+    }
+
+    void return_value(T& t)
+    {
+        value = t;
+    }
+
+    void unhandled_exception() noexcept
+    {
+        try
+        {
+            std::rethrow_exception(std::current_exception());
+        }
+        catch (const std::exception& e)
+        {
+            std::cerr << "Caught exception: '" << e.what() << "'\n";
+        }
+        std::terminate();
+    }
+};
+
+export template <TaskType task_type>
+class promise<void, task_type>
+{
+    template <typename U, TaskType>
+    friend class base_task;
+    friend class final_awaiter;
+
+    std::shared_ptr<std::vector<std::pair<void*, TaskType>>> recursive_info;
+public:
+    auto get_return_object() noexcept { return base_task<void, task_type>{ std::coroutine_handle<promise>::from_promise(*this) }; }
+
+    std::suspend_always initial_suspend() noexcept
+    {
+        recursive_info = std::make_shared<std::vector<std::pair<void*, TaskType>>>();
+        recursive_info->push_back({ std::coroutine_handle<promise>::from_promise(*this).address(), task_type });
+        return {};
+    }
+
+    final_awaiter final_suspend() noexcept { return {}; }
+
+    void return_void() noexcept {}
+
+    void unhandled_exception() noexcept {
+        try
+        {
+            std::rethrow_exception(std::current_exception());
+        }
+        catch (const std::exception& e)
+        {
+            std::cerr << "Caught exception: '" << e.what() << "'\n";
+        }
+        std::terminate();
+    }
+};
+
+export template <>
+class promise<int, TaskType::SLEEP>
+{
+    template <typename U, TaskType tt2>
+    friend class base_task;
+    friend class final_awaiter;
+
+    friend class EventLoop;
+    std::optional<int> value{};
+
+    std::shared_ptr<std::vector<std::pair<void*, TaskType>>> recursive_info;
+public:
+    auto get_return_object() noexcept { return base_task<int, TaskType::SLEEP>{ std::coroutine_handle<promise>::from_promise(*this) }; }
+
+    std::suspend_always initial_suspend() noexcept
+    {
+        recursive_info = std::make_shared<std::vector<std::pair<void*, TaskType>>>();
+        recursive_info->push_back({ std::coroutine_handle<promise>::from_promise(*this).address(), TaskType::SLEEP });
+        return {};
+    }
+
+    final_awaiter final_suspend() noexcept { return {}; }
+
+    final_awaiter yield_value(int t)
+    {
+        value = t;
+        return {};
+    }
+
+    void return_value(int t)
+    {
+        value = t;
+    }
+
+    void unhandled_exception() noexcept
+    {
+        try
+        {
+            std::rethrow_exception(std::current_exception());
+        }
+        catch (const std::exception& e)
+        {
+            std::cerr << "Caught exception: '" << e.what() << "'\n";
+        }
+        std::terminate();
+    }
+};
+
 export template <typename T>
 using task = base_task<T, TaskType::CPU>;
 
 export template <typename T>
 using io_task = base_task<T, TaskType::IO>;
 
-export using sleep_task = base_task<std::chrono::milliseconds, TaskType::SLEEP>;
+export using sleep_task = base_task<int, TaskType::SLEEP>;

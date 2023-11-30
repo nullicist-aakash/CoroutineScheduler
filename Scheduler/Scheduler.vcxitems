@@ -16,7 +16,6 @@
   <ItemGroup>
     <ClCompile Include="$(MSBuildThisFileDirectory)eventloop.ixx" />
     <ClCompile Include="$(MSBuildThisFileDirectory)final_awaiter.ixx" />
-    <ClCompile Include="$(MSBuildThisFileDirectory)promise.ixx" />
     <ClCompile Include="$(MSBuildThisFileDirectory)scheduler.ixx" />
     <ClCompile Include="$(MSBuildThisFileDirectory)task.ixx" />
     <ClCompile Include="$(MSBuildThisFileDirectory)tasktype.ixx" />
