@@ -42,7 +42,7 @@ TCP::TCP(const SocketPair& sp)
 	this->socket_pair.self = addr;
 }
 
-TCP::TCP(TCP&& other)
+TCP::TCP(TCP&& other) noexcept
 {
 	this->sockfd = other.sockfd;
 	this->socket_pair = other.socket_pair;
@@ -50,7 +50,7 @@ TCP::TCP(TCP&& other)
 	other.socket_pair = {};
 }
 
-TCP& TCP::operator=(TCP&& other)
+TCP& TCP::operator=(TCP&& other) noexcept
 {
 	if (&other == this)
 		return *this;

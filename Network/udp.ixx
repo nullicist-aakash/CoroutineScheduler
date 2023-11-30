@@ -16,8 +16,8 @@ public:
 	UDP(const PORT&);
 	UDP(UDP&) = delete;
 	UDP& operator=(UDP&) = delete;
-	UDP(UDP&&);
-	UDP& operator=(UDP&&);
+	UDP(UDP&&) noexcept;
+	UDP& operator=(UDP&&) noexcept;
 
 	void bind(const Socket& self_socket);
 	void send(std::string_view sv, const Socket& remote) const;

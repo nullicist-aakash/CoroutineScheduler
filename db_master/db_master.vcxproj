@@ -24,7 +24,7 @@
     <ProjectGuid>{546810b0-211a-42be-a785-f61d8df1065d}</ProjectGuid>
     <RootNamespace>dbmaster</RootNamespace>
     <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
-    <ProjectName>db master</ProjectName>
+    <ProjectName>DB Master</ProjectName>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
@@ -58,6 +58,7 @@
   </ImportGroup>
   <ImportGroup Label="Shared">
     <Import Project="..\Network\Network.vcxitems" Label="Shared" />
+    <Import Project="..\Scheduler\Scheduler.vcxitems" Label="Shared" />
   </ImportGroup>
   <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
@@ -133,6 +134,14 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Update="C:\Users\Aakash\source\repos\ConsistentHashing\Task Schedular\.ixx">
+      <FileType>Document</FileType>
+    </ClCompile>
+    <ClCompile Update="C:\Users\Aakash\source\repos\ConsistentHashing\Task Schedular\threadsafe_queue.ixx">
+      <FileType>Document</FileType>
+    </ClCompile>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

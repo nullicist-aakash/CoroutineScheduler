@@ -5,7 +5,9 @@ VisualStudioVersion = 17.7.34221.43
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Network", "Network\Network.vcxitems", "{0737E867-614E-4ED0-86C6-D34EAEF4C349}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "db master", "db_master\db_master.vcxproj", "{546810B0-211A-42BE-A785-F61D8DF1065D}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "DB Master", "db_master\db_master.vcxproj", "{546810B0-211A-42BE-A785-F61D8DF1065D}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Scheduler", "Scheduler\Scheduler.vcxitems", "{950E726D-7A47-4814-8C81-017C1DB0217A}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -33,5 +35,7 @@ Global
 	GlobalSection(SharedMSBuildProjectFiles) = preSolution
 		Network\Network.vcxitems*{0737e867-614e-4ed0-86c6-d34eaef4c349}*SharedItemsImports = 9
 		Network\Network.vcxitems*{546810b0-211a-42be-a785-f61d8df1065d}*SharedItemsImports = 4
+		Scheduler\Scheduler.vcxitems*{546810b0-211a-42be-a785-f61d8df1065d}*SharedItemsImports = 4
+		Scheduler\Scheduler.vcxitems*{950e726d-7a47-4814-8c81-017c1db0217a}*SharedItemsImports = 9
 	EndGlobalSection
 EndGlobal

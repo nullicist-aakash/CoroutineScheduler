@@ -28,14 +28,14 @@ TCPServer::TCPServer(const Socket& self_socket) : self_socket(self_socket)
 		throw runtime_error(format("'listen' error while creating TCP Server socket {} : {}", (string)self_socket, get_err_str()));
 }
 
-TCPServer::TCPServer(TCPServer&& other) : self_socket(other.self_socket)
+TCPServer::TCPServer(TCPServer&& other) noexcept : self_socket(other.self_socket)
 {
 	this->listenfd = other.listenfd;
 	other.listenfd = INVALID_SOCKET;
 	other.self_socket = {};
 }
 
-TCPServer& TCPServer::operator=(TCPServer&& other)
+TCPServer& TCPServer::operator=(TCPServer&& other) noexcept
 {
 	if (&other == this)
 		return *this;

@@ -16,8 +16,8 @@ public:
 	TCP(const SocketPair&);
 	TCP(TCP&) = delete;
 	TCP& operator=(TCP&) = delete;
-	TCP(TCP&&);
-	TCP& operator=(TCP&&);
+	TCP(TCP&&) noexcept;
+	TCP& operator=(TCP&&) noexcept;
 
 	size_t send(std::string_view) const;
 	std::string receive(size_t n = 0) const;

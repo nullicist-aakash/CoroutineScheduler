@@ -16,8 +16,8 @@ public:
 
 	TCPServer(TCPServer&) = delete;
 	TCPServer& operator=(TCPServer&) = delete;
-	TCPServer(TCPServer&&);
-	TCPServer& operator=(TCPServer&&);
+	TCPServer(TCPServer&&) noexcept;
+	TCPServer& operator=(TCPServer&&) noexcept;
 
 	const Socket& get_socket() const;
 	TCP accept() const;

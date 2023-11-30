@@ -23,13 +23,13 @@ UDP::UDP(const Socket& self_socket) : UDP() { this->bind(self_socket); }
 
 UDP::UDP(const PORT& self_port) : UDP(Socket{ {}, self_port }) {}
 
-UDP::UDP(UDP&& other)
+UDP::UDP(UDP&& other) noexcept
 {
 	this->sockfd = other.sockfd;
 	other.sockfd = INVALID_SOCKET;
 }
 
-UDP& UDP::operator=(UDP&& other)
+UDP& UDP::operator=(UDP&& other) noexcept
 {
 	if (this == &other)
 		return *this;
