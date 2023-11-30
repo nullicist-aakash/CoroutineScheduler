@@ -80,7 +80,7 @@ class threadsafe_queue
     std::mutex mutex_;
     std::condition_variable cv;
 public:
-    void push(T&& val, milliseconds ms = 0)
+    void push(T&& val, milliseconds ms = 0ms)
     {
         std::unique_lock<std::mutex> lock(mutex_);
         queue.emplace(steady_clock::now() + ms, std::move(val));
