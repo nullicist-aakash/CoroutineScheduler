@@ -8,6 +8,7 @@ import <stdexcept>;
 import <chrono>;
 import <iostream>;
 
+using std::chrono::milliseconds;
 import scheduler.task.tasktype;
 import scheduler.task.final_awaiter;
 
@@ -103,10 +104,9 @@ class promise
     friend class base_task;
     friend class final_awaiter;
 
-    std::optional<T> value{};
-
     std::shared_ptr<std::vector<std::pair<void*, TaskType>>> recursive_info;
 public:
+    std::optional<T> value{};
     auto get_return_object() noexcept { return base_task<T, task_type>{ std::coroutine_handle<promise>::from_promise(*this) }; }
 
     std::suspend_always initial_suspend() noexcept
@@ -190,18 +190,18 @@ public:
 };
 
 export template <>
-class promise<int, TaskType::SLEEP>
+class promise<milliseconds, TaskType::SLEEP>
 {
     template <typename U, TaskType tt2>
     friend class base_task;
     friend class final_awaiter;
 
     friend class EventLoop;
-    std::optional<int> value{};
 
     std::shared_ptr<std::vector<std::pair<void*, TaskType>>> recursive_info;
 public:
-    auto get_return_object() noexcept { return base_task<int, TaskType::SLEEP>{ std::coroutine_handle<promise>::from_promise(*this) }; }
+    std::optional<milliseconds> value{};
+    auto get_return_object() noexcept { return base_task<milliseconds, TaskType::SLEEP>{ std::coroutine_handle<promise>::from_promise(*this) }; }
 
     std::suspend_always initial_suspend() noexcept
     {
@@ -212,13 +212,13 @@ public:
 
     final_awaiter final_suspend() noexcept { return {}; }
 
-    final_awaiter yield_value(int t)
+    final_awaiter yield_value(milliseconds t)
     {
         value = t;
         return {};
     }
 
-    void return_value(int t)
+    void return_value(milliseconds t)
     {
         value = t;
     }
@@ -243,4 +243,4 @@ using task = base_task<T, TaskType::CPU>;
 export template <typename T>
 using io_task = base_task<T, TaskType::IO>;
 
-export using sleep_task = base_task<int, TaskType::SLEEP>;
+export using sleep_task = base_task<milliseconds, TaskType::SLEEP>;
