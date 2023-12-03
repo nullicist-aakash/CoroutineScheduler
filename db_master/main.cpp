@@ -15,21 +15,27 @@ sleep_task hoo(seconds s)
     co_return s;
 }
 
-task<void> foo(seconds x)
+task<void> foo()
 {
-    co_await hoo(x);
-    cout << x << endl;
+    Socket self = { IP{"127.0.0.1"}, PORT{15608, ByteOrder::HOST} };
+    Socket remote = { IP{"127.0.0.1"}, PORT{8081, ByteOrder::HOST} };
+    SocketPair sp = { self, remote };
+    TCP tcp{ sp };
+    while (true)
+    {
+        auto res = co_await tcp.receive();
+        cout << res << endl;
+        co_await hoo(5s);
+        co_await tcp.send(res);
+    }
+    co_return;
 }
 
 int main()
 {
     clog.setstate(std::ios_base::failbit);
-    auto& el = EventLoop::get_instance();
 
-    el.schedule(foo(6s));
-    el.schedule(foo(4s));
-    el.schedule(foo(3s));
-    el.schedule(foo(1s));
-    el.schedule(foo(7s));
+    auto& el = EventLoop::get_instance();
+    el.schedule(foo());
     el.run();
 }

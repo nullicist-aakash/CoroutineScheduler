@@ -5,6 +5,7 @@ module;
 
 module network.tcp;
 import network.types;
+import scheduler;
 import <utility>;
 import <string>;
 
@@ -62,7 +63,7 @@ TCP& TCP::operator=(TCP&& other) noexcept
 	return *this;
 }
 
-size_t TCP::send(string_view sv) const
+io_task<size_t> TCP::send(string_view sv) const
 {
 	auto nleft = sv.size();
 	const char* ptr = sv.data();
@@ -90,10 +91,10 @@ size_t TCP::send(string_view sv) const
 		ptr += nwritten;
 	}
 
-	return sv.size();
+	co_return sv.size();
 }
 
-std::string TCP::receive(size_t n) const
+io_task<std::string> TCP::receive(size_t n) const
 {
 	if (n == 0)
 	{
@@ -107,7 +108,7 @@ std::string TCP::receive(size_t n) const
 			throw std::runtime_error(format("'read' error while reading message from {}: {}", (string)this->socket_pair, get_err_str()));
 
 		str.resize(nread);
-		return str;
+		co_return str;
 	}
 
 	std::string buffer(n, '\0');
@@ -139,7 +140,7 @@ std::string TCP::receive(size_t n) const
 		ptr += nread;
 	}
 
-	return buffer;
+	co_return buffer;
 }
 
 const SocketPair& TCP::get_socket_pair() const
@@ -148,7 +149,7 @@ const SocketPair& TCP::get_socket_pair() const
 }
 
 
-void TCP::close()
+io_task<void> TCP::close()
 {
 	if (sockfd != INVALID_SOCKET)
 #ifdef WINDOWS
@@ -157,6 +158,7 @@ void TCP::close()
 		::close(sockfd);
 #endif
 	sockfd = INVALID_SOCKET;
+	co_return;
 }
 
 

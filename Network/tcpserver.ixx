@@ -4,6 +4,7 @@ module;
 export module network.tcp.server;
 import network.types;
 import network.tcp;
+import scheduler;
 import <utility>;
 import <string>;
 
@@ -20,8 +21,8 @@ public:
 	TCPServer& operator=(TCPServer&&) noexcept;
 
 	const Socket& get_socket() const;
-	TCP accept() const;
-	void close();
+	io_task<TCP> accept() const;
+	io_task<void> close();
 
 	~TCPServer();
 };

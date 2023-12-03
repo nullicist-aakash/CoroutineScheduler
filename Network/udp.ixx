@@ -4,6 +4,7 @@ module;
 export module network.udp;
 
 import network.types;
+import scheduler;
 import <utility>;
 import <string>;
 
@@ -19,10 +20,10 @@ public:
 	UDP(UDP&&) noexcept;
 	UDP& operator=(UDP&&) noexcept;
 
-	void bind(const Socket& self_socket);
-	void send(std::string_view sv, const Socket& remote) const;
-	std::pair<std::string, Socket> receive() const;
+	io_task<void> bind(const Socket& self_socket);
+	io_task<void> send(std::string_view sv, const Socket& remote) const;
+	io_task<std::pair<std::string, Socket>> receive() const;
 	PORT get_self_port() const;
-	void close();
+	io_task<void> close();
 	~UDP();
 };

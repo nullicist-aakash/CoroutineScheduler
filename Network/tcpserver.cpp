@@ -4,6 +4,7 @@ module;
 
 module network.tcp.server;
 import network.types;
+import scheduler;
 import <utility>;
 import <string>;
 
@@ -52,7 +53,7 @@ const Socket& TCPServer::get_socket() const
 	return self_socket;
 }
 
-TCP TCPServer::accept() const
+io_task<TCP> TCPServer::accept() const
 {
 	sockaddr_in cliaddr{};
 	socklen_t clilen = sizeof(cliaddr);
@@ -68,10 +69,10 @@ TCP TCPServer::accept() const
 		throw runtime_error(
 			format("'getsockname' error after accepting connection on TCP server {}: {}", (string)self_socket, get_err_str()));
 
-	return TCP(sockfd, SocketPair{ self_addr, cliaddr });
+	co_return TCP(sockfd, SocketPair{ self_addr, cliaddr });
 }
 
-void TCPServer::close()
+io_task<void> TCPServer::close()
 {
 	if (listenfd != INVALID_SOCKET)
 #ifdef WINDOWS
@@ -80,6 +81,7 @@ void TCPServer::close()
 	::close(listenfd);
 #endif
 	listenfd = INVALID_SOCKET;
+	co_return;
 }
 
 TCPServer::~TCPServer()

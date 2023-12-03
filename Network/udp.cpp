@@ -5,6 +5,7 @@ module;
 
 module network.udp;
 import network.types;
+import scheduler;
 import <utility>;
 import <string>;
 
@@ -39,23 +40,25 @@ UDP& UDP::operator=(UDP&& other) noexcept
 	return *this;
 }
 
-void UDP::bind(const Socket& self_socket)
+io_task<void> UDP::bind(const Socket& self_socket)
 {
 	sockaddr_in serv_addr = self_socket;
 
 	if (::bind(sockfd, (sockaddr*)&serv_addr, sizeof(serv_addr)) == SOCKET_ERROR)
 		throw runtime_error(format("'bind' error while binding UDP socket on {}: {}", (string)self_socket, get_err_str()));
+	co_return;
 }
 
-void UDP::send(string_view sv, const Socket& remote) const
+io_task<void> UDP::send(string_view sv, const Socket& remote) const
 {
 	sockaddr_in serv_addr = remote;
 	int bytes_sent = sendto(sockfd, sv.data(), (int)sv.size(), 0, (sockaddr*)&serv_addr, sizeof(serv_addr));
 	if (bytes_sent == SOCKET_ERROR)
 		throw runtime_error(format("'sendto' error while sending '{}' to {}: {}", sv, (string)remote, get_err_str()));
+	co_return;
 }
 
-pair<string, Socket> UDP::receive() const
+io_task<pair<string, Socket>> UDP::receive() const
 {
 	sockaddr_in serv_addr{};
 	socklen_t len = sizeof(serv_addr);
@@ -66,7 +69,7 @@ pair<string, Socket> UDP::receive() const
 		throw runtime_error(format("'recvfrom' error while receiving data on PORT {}: {}", (string)this->get_self_port(), get_err_str()));
 
 	str.resize(n);
-	return { str, Socket{ serv_addr } };
+	co_return { str, Socket{ serv_addr } };
 }
 
 PORT UDP::get_self_port() const
@@ -78,7 +81,7 @@ PORT UDP::get_self_port() const
 	return addr.sin_port;
 }
 
-void UDP::close()
+io_task<void> UDP::close()
 {
 	if (sockfd != INVALID_SOCKET)
 #ifdef WINDOWS
@@ -87,6 +90,7 @@ void UDP::close()
 		::close(sockfd);
 #endif
 	sockfd = INVALID_SOCKET;
+	co_return;
 }
 
 UDP::~UDP()

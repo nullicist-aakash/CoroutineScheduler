@@ -3,6 +3,7 @@ module;
 
 export module network.tcp;
 import network.types;
+import scheduler;
 import <string>;
 
 export class TCP
@@ -19,11 +20,11 @@ public:
 	TCP(TCP&&) noexcept;
 	TCP& operator=(TCP&&) noexcept;
 
-	size_t send(std::string_view) const;
-	std::string receive(size_t n = 0) const;
+	io_task<size_t> send(std::string_view) const;
+	io_task<std::string> receive(size_t n = 0) const;
 
 	const SocketPair& get_socket_pair() const;
-	void close();
+	io_task<void> close();
 
 	~TCP();
 };
