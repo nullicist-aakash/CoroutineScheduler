@@ -164,5 +164,12 @@ io_task<void> TCP::close()
 
 TCP::~TCP()
 {
-	this->close();
+	if (sockfd != INVALID_SOCKET)
+#ifdef WINDOWS
+		::closesocket(sockfd);
+#elif defined(UNIX)
+		::close(sockfd);
+#endif
+	sockfd = INVALID_SOCKET;
+	co_return;
 }

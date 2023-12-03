@@ -86,5 +86,12 @@ io_task<void> TCPServer::close()
 
 TCPServer::~TCPServer()
 {
-	this->close();
+	if (listenfd != INVALID_SOCKET)
+#ifdef WINDOWS
+		::closesocket(listenfd);
+#elif defined(UNIX)
+		::close(listenfd);
+#endif
+	listenfd = INVALID_SOCKET;
+	co_return;
 }

@@ -95,5 +95,11 @@ io_task<void> UDP::close()
 
 UDP::~UDP()
 {
-	this->close();
+	if (sockfd != INVALID_SOCKET)
+#ifdef WINDOWS
+		::closesocket(sockfd);
+#elif defined(UNIX)
+		::close(sockfd);
+#endif
+	sockfd = INVALID_SOCKET;
 }
