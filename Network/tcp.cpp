@@ -171,5 +171,4 @@ TCP::~TCP()
 		::close(sockfd);
 #endif
 	sockfd = INVALID_SOCKET;
-	co_return;
 }

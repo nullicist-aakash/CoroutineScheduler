@@ -93,5 +93,4 @@ TCPServer::~TCPServer()
 		::close(listenfd);
 #endif
 	listenfd = INVALID_SOCKET;
-	co_return;
 }
