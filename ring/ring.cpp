@@ -9,19 +9,6 @@ using namespace std;
 
 struct ring
 {
-private:
-    int ring_node_count;
-    int supported_node_count;
-    int replication_count;
-    bigint hash(string input) {
-        SHA256 sha;
-        sha.update(input);
-        string hash = sha.toString(sha.digest());
-        return bigint(hash);
-    }
-    set<string> destinations;
-    map<string, vector<bigint>> node_to_vnode; // node, vnodes
-    map<bigint, string> vnode_to_node; // vnode, node
 public:
     void add_destination(string IP) {
         destinations.insert(IP);
@@ -49,4 +36,17 @@ public:
         // other logic
         return nearest_destination;
     }
+private:
+    int ring_node_count;
+    int supported_node_count;
+    int replication_count;
+    bigint hash(string input) {
+        SHA256 sha;
+        sha.update(input);
+        string hash = sha.toString(sha.digest());
+        return bigint(hash);
+    }
+    set<string> destinations;
+    map<string, vector<bigint>> node_to_vnode; // node, vnodes
+    map<bigint, string> vnode_to_node; // vnode, node
 };
