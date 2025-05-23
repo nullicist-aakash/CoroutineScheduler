@@ -1,4 +1,4 @@
-# Courituine Scheduler
+# Couroutine Scheduler
 
 Here, I tried the implementation of nodejs scheduler in C++ where the entrie app is single threaded but I/O tasks run in background threads. 
 
